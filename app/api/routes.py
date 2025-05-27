@@ -12,12 +12,13 @@ from fastapi.responses import StreamingResponse
 from app.services.camera_streamer_mock import CameraStreamerMock
 from .dependencies import notifier
 import datetime
+from fastapi.responses import RedirectResponse
 
 router = APIRouter()
 
 @router.get("/")
 def read_root():
-    return {"Hola esto es una prueba"}
+    return RedirectResponse(url="/static/index.html")
 
 
 """
@@ -52,7 +53,19 @@ Endpoint for testing notifications system
 """
 @router.get("/notifications/test")
 def test_notification():
+    if not notifier.is_enabled():
+        logger.warning("Notifications are disabled. Cannot send test notification.")
+        return {"message": "Notifications are disabled. Cannot send test notification."}
     notifier.alert(f"Simulated notification test")
+    logger.info(f"Notification test sent at {datetime.datetime.now()}")
     return {"message": "Notification test sent."}
 
 
+"""
+Returns the current status of notifications: enabled or disabled
+"""
+@router.get("/notifications/status")
+def notifications_status():
+    status = "enabled" if notifier.is_enabled() else "disabled"
+    logger.info(f"Notifications status checked: {status}")
+    return {"notifications_status": status}

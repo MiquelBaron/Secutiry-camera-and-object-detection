@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Camera Detection</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 2rem;
+        }
+        video, img {
+            max-width: 100%;
+            border: 4px solid #333;
+            border-radius: 10px;
+        }
+        button {
+            margin: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .on { background-color: #4CAF50; color: white; }
+        .off { background-color: #f44336; color: white; }
+        #status {
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Cámara de Detección</h1>
+    <img src="/stream" alt="Video stream" />
+
+    <div>
+        <button class="on" onclick="toggleNotifications(true)">Activar notificaciones</button>
+        <button class="off" onclick="toggleNotifications(false)">Desactivar notificaciones</button>
+        <button class="off" onclick="sendAlert()">Enviar alerta test</button>
+    </div>
+
+    <p id="status">Cargando estado...</p>
+
+    <script>
+        async function toggleNotifications(enable) {
+            const url = enable ? '/notifications/on' : '/notifications/off';
+            const res = await fetch(url);
+            const data = await res.json();
+            document.getElementById('status').innerText = data.message;
+        }
+
+        async function sendAlert() {
+            const res = await fetch('/notifications/test');
+            const data = await res.json();
+            document.getElementById('status').innerText = data.message;
+        }
+
+        async function checkNotificationStatus() {
+            try {
+                const res = await fetch('/notifications/status');
+                const data = await res.json();
+                const statusText = data.notifications_status === 'enabled' ?
+                    '✅ Notificaciones activadas' : '❌ Notificaciones desactivadas';
+                document.getElementById('status').innerText = statusText;
+            } catch (err) {
+                document.getElementById('status').innerText = '⚠️ Error al obtener el estado';
+            }
+        }
+
+        // Consultar estado al cargar
+        checkNotificationStatus();
+    </script>
+</body>
+</html>

@@ -27,6 +27,9 @@ class Notifier():
         return self.notifications_enabled
     
     def alert(self, message:str):
+        """
+        Sends an alert message to the configured chat via Telegram bo
+        """
         if not self.notifications_enabled:
             logger.info("Notifications are disabled. Cannot send alert")
             return
