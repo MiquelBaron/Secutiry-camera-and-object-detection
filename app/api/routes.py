@@ -11,6 +11,7 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from app.services.camera_streamer_mock import CameraStreamerMock
 from .dependencies import notifier
+import datetime
 
 router = APIRouter()
 
@@ -34,7 +35,6 @@ Turns notifications on
 @router.get("/notifications/on")
 def notifications_on():
         notifier.enable()
-        logger.info("Notifications enabled")
         return{"message": "Notifications are on"}
 
     
@@ -44,9 +44,15 @@ Turns notifications off
 @router.get("/notifications/off")
 def notifications_off():
     notifier.disable()
-    logger.info("Notifications disabled")
     return{"message": "Notifications are off"}
 
 
+"""
+Endpoint for testing notifications system
+"""
+@router.get("/notifications/test")
+def test_notification():
+    notifier.alert(f"Simulated notification test")
+    return {"message": "Notification test sent."}
 
 

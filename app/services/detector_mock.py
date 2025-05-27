@@ -1,3 +1,4 @@
+"""
 import time
 import threading
 from loguru import logger
@@ -30,3 +31,5 @@ class DetectorMock:
     def stop(self):
         self.running = False
         logger.info("Detector stopped.")
+
+"""
